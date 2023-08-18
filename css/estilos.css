@@ -1,0 +1,28 @@
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.bg-tecnm {
+    background: #1b396a;
+    color: white;
+}
+
+#blocklyDiv {
+    height: 70vh;
+    width: 100%;
+}
+
+#taCodigo {
+    height: 60vh;
+    width: 100%;
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+}
