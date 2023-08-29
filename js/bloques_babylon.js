@@ -1,4 +1,4 @@
-// Creación de bloques BabylonJS con las cámaras disponibles
+// Creación de bloques BabylonJS con las cámaras
 Blockly.Blocks['babylon_create_camera'] = {
   init: function() {
     const dropdown = new Blockly.FieldDropdown([
@@ -29,7 +29,6 @@ Blockly.Blocks['babylon_create_camera'] = {
     });
   },
   updateShape_: function(cameraType) {
-    debugger
     if (cameraType === 'arcrotate') {
       if (!this.getInput('ALPHA')) {
         this.appendValueInput("ALPHA")
@@ -62,13 +61,6 @@ Blockly.JavaScript['babylon_create_camera'] = function (block) {
   const beta = Blockly.JavaScript.valueToCode(block, 'BETA', Blockly.JavaScript.ORDER_ATOMIC) || '0';
   const radius = Blockly.JavaScript.valueToCode(block, 'RADIUS', Blockly.JavaScript.ORDER_ATOMIC) || '0';
 
-  // let code = '';
-  // if (cameraType === 'arcrotate') {
-  //   code += `createArcRotateCamera(${positionX}, ${positionY}, ${positionZ}, canvas, BABYLON) \n`;
-  // } else if (cameraType === 'free') {
-  //   code += `createFreeCamera(${positionX}, ${positionY}, ${positionZ}, canvas, BABYLON) \n`;
-  // }
-
   let code = '';
   if (cameraType === 'arcrotate') {
     code += `${cameraName} = new BABYLON.ArcRotateCamera("arcRotateCamera", ${alpha}, ${beta}, ${radius}, new BABYLON.Vector3(${positionX}, ${positionY}, ${positionZ}));
@@ -82,19 +74,7 @@ Blockly.JavaScript['babylon_create_camera'] = function (block) {
 
 };
 
-// function createArcRotateCamera(positionX, positionY, positionZ, canvas, BABYLON) {
-//   let camera = new BABYLON.ArcRotateCamera("arcRotateCamera", 0, 0, 10, new BABYLON.Vector3(positionX, positionY, positionZ));
-//   camera.attachControl(canvas, true)
-//   return camera;
-// }
-
-// function createFreeCamera(positionX, positionY, positionZ, canvas, BABYLON) {
-//   let camera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(positionX, positionY, positionZ));
-//   camera.attachControl(true)
-//   return camera;
-// }
-
-// Creación de bloques BabylonJS con las luces disponibles
+// Creación de bloques BabylonJS con las luces
 Blockly.Blocks['babylon_create_light'] = {
   init: function() {
     const dropdown = new Blockly.FieldDropdown([
@@ -118,7 +98,7 @@ Blockly.Blocks['babylon_create_light'] = {
       .setCheck("Number")
       .appendField("Posición Z");
     this.setColour(230);
-    this.setTooltip("Crea una luz en Babylon.js con el tipo y posición especificados");
+    this.setTooltip("Crea una luz en Babylon.js con el tipo, posición (y direccion) especificados");
     this.setHelpUrl("https://doc.babylonjs.com/features/featuresDeepDive/lights");
     const thisBlock = this;
     dropdown.setValidator(function(option) {
@@ -127,7 +107,6 @@ Blockly.Blocks['babylon_create_light'] = {
     });
   },
   updateShape_: function(lightType) {
-    debugger
     if (lightType === 'spot') {
       if (!this.getInput('DIRECTION_X')) {
         this.appendValueInput("DIRECTION_X")
@@ -170,15 +149,6 @@ Blockly.JavaScript['babylon_create_light'] = function (block) {
   const angle = Blockly.JavaScript.valueToCode(block, 'ANGLE', Blockly.JavaScript.ORDER_ATOMIC) || '0';
   const exponent = Blockly.JavaScript.valueToCode(block, 'EXPONENT', Blockly.JavaScript.ORDER_ATOMIC) || '0';
 
-  // let code = '';
-  // if (lightType === 'directional') {
-  //   code += `createDirectionalLight(${positionX}, ${positionY}, ${positionZ}) \n`;
-  // } else if (lightType === 'point') {
-  //   code += `createPointLight(${positionX}, ${positionY}, ${positionZ}) \n`;
-  // } else if (lightType === 'spot') {
-  //   code += `createSpotLight(${positionX}, ${positionY}, ${positionZ}) \n`;
-  // }
-
   let code = '';
   if (lightType === 'directional') {
     code += `${lightName} = new BABYLON.DirectionalLight("directionalLight", new BABYLON.Vector3(${positionX}, ${positionY}, ${positionZ})); \n`;
@@ -193,21 +163,6 @@ Blockly.JavaScript['babylon_create_light'] = function (block) {
   return code
 
 };
-
-// function createDirectionalLight(positionX, positionY, positionZ) {
-//   let light = new BABYLON.DirectionalLight("directionalLight", new BABYLON.Vector3(positionX, positionY, positionZ));
-//   return light;
-// }
-
-// function createPointLight(positionX, positionY, positionZ) {
-//   let light = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(positionX, positionY, positionZ));
-//   return light;
-// }
-
-// function createSpotLight(positionX, positionY, positionZ) {
-//   let light = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(positionX, positionY, positionZ), new BABYLON.Vector3(0, -1, 0), Math.PI / 3, 2);
-//   return light;
-// }
 
 // Creación de bloques BabylonJS para la creación de figuras 3D
 Blockly.Blocks['babylon_create_shape'] = {
@@ -236,7 +191,7 @@ Blockly.Blocks['babylon_create_shape'] = {
             .appendField("profundidad");
         // Las propiedades dependen de la figura seleccionada y se llenara en el updateShape_
     this.setColour(230)
-    this.setTooltip("Crea una figura en Babylon.js (caja, esfera o cilindro) con las dimensiones y posición especificadas")
+    this.setTooltip("Crea una figura en Babylon.js (caja, esfera, cilindro, plano, torus) con las dimensiones y posición especificadas")
     this.setHelpUrl("https://doc.babylonjs.com/features/featuresDeepDive/mesh")
     const thisBlock = this;
     dropdown.setValidator(function(option) {
@@ -245,7 +200,6 @@ Blockly.Blocks['babylon_create_shape'] = {
     });
   },
   updateShape_: function(shapeType) {
-    debugger
     this.removeLastShape_();
     switch (shapeType) {
       case 'box':
@@ -392,42 +346,9 @@ Blockly.JavaScript['babylon_create_shape'] = function (block) {
       code = `${shapeName} = BABYLON.MeshBuilder.CreateTorus("${shapeName}", { diameter: ${diameter}, thickness: ${thickness} })`;
     break;
   }
-  
-  // let code = '';
-  // if (shapeType === 'box') {
-  //   code += `createBox(${width}, ${height}, ${depth}, ${positionX}, ${positionY}, ${positionZ}) \n`;
-  // } else if (shapeType === 'sphere') {
-  //   code += `createSphere(${width}, ${positionX}, ${positionY}, ${positionZ}) \n`;
-  // } else if (shapeType === 'cylinder') {
-  //   code += `createCylinder(${width}, ${height}, ${positionX}, ${positionY}, ${positionZ}) \n`;
-  // }
 
   return code
 };
-
-// function createBox(width, height, depth, positionX, positionY, positionZ) {
-//   let box = BABYLON.MeshBuilder.CreateBox("box", { width: width, height: height, depth: depth });
-//   box.position.x = positionX;
-//   box.position.y = positionY;
-//   box.position.z = positionZ;
-//   return box;
-// }
-
-// function createSphere(radius, positionX, positionY, positionZ) {
-//   let sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: radius });
-//   sphere.position.x = positionX;
-//   sphere.position.y = positionY;
-//   sphere.position.z = positionZ;
-//   return sphere;
-// }
-
-// function createCylinder(diameter, height, positionX, positionY, positionZ) {
-//   let cylinder = BABYLON.MeshBuilder.CreateCylinder("cylinder", { height: height, diameterTop: diameter, diameterBottom: diameter });
-//   cylinder.position.x = positionX;
-//   cylinder.position.y = positionY;
-//   cylinder.position.z = positionZ;
-//   return cylinder;
-// }
 
 // Creación de bloques de BabylonJS para la creación de suelo
 Blockly.Blocks['babylon_create_ground'] = {
@@ -459,10 +380,207 @@ Blockly.JavaScript['babylon_create_ground'] = function (block) {
 
 };
 
-// function createGround(width, depth, positionX, positionY, positionZ) {
-//   let ground = BABYLON.MeshBuilder.CreateGround("ground", { width: width, height: depth });
-//   ground.position.x = positionX;
-//   ground.position.y = positionY;
-//   ground.position.z = positionZ;
-//   return ground;
-// }
+// Creación de bloques BabylonJS para la creación de material
+Blockly.Blocks['babylon_create_material'] = {
+  init: function() {
+    const dropdown = new Blockly.FieldDropdown([
+      ["estándar", "standard"],
+    ]);
+    this.appendDummyInput()
+        .appendField("Crear material")
+        .appendField(dropdown, "MATERIAL_TYPE")
+        .appendField("llamado")
+        .appendField(new Blockly.FieldVariable("material"), "MATERIAL_NAME")
+    this.setColour(230);
+    this.setTooltip("Crea un material en Babylon.js del tipo especificado");
+    this.setHelpUrl("https://doc.babylonjs.com/features/featuresDeepDive/materials");
+  }
+};
+
+Blockly.JavaScript['babylon_create_material'] = function (block) {
+  const materialType = block.getFieldValue('MATERIAL_TYPE');
+  const materialName = block.getField('MATERIAL_NAME').getText();
+
+  let code = ''
+
+  if(materialType === 'standard') {
+    code += `${materialName} = new BABYLON.StandardMaterial("${materialName}") \n`
+  }
+
+  return code
+
+}
+
+// Creación de bloque BabylonJS para la asignación de material a una figura
+Blockly.Blocks['babylon_set_material'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Asignar material")
+        .appendField(new Blockly.FieldVariable("material"), "MATERIAL_VARIABLE")
+        .appendField("a la figura")
+        .appendField(new Blockly.FieldVariable("shape"), "SHAPE_VARIABLE")
+    this.setColour(230);
+    this.setTooltip("Asigna un material a una figura en Babylon.js");
+    this.setHelpUrl("https://doc.babylonjs.com/features/featuresDeepDive/materials/using/materials_introduction");
+  }
+};
+
+Blockly.JavaScript['babylon_set_material'] = function (block) {
+  const materialName = block.getField('MATERIAL_VARIABLE').getText();
+  const shapeName = block.getField('SHAPE_VARIABLE').getText();
+
+  let code = `${shapeName}.material = ${materialName} \n`
+
+  return code
+
+}
+
+// Creación de bloques BabylonJS para la creación de asignación de material a una figura
+Blockly.Blocks['babylon_set_material_color'] = {
+  init: function() {
+    const dropdown = new Blockly.FieldDropdown([
+      ["difuso", "diffuseColor"],
+      ["especular", "specularColor"],
+      ["emisivo", "emissiveColor"],
+      ["ambiente", "ambientColor"]
+    ]);
+    this.appendDummyInput()
+        .appendField("Asignar material para el material")
+        .appendField(new Blockly.FieldVariable("shape"), "SHAPE_VARIABLE")
+        .appendField("con reaccion a la luz")
+        .appendField(dropdown, "MATERIAL_COLOR")
+    this.appendValueInput("COLOR")
+        .appendField("con el color:")
+    this.setColour(230);
+    this.setTooltip("Asigna como el material manejara el color de la figura en Babylon.js");
+    this.setHelpUrl("https://doc.babylonjs.com/features/featuresDeepDive/materials/using/materials_introduction");
+  }
+};
+
+Blockly.JavaScript['babylon_set_material_color'] = function (block) {
+  const shapeName = block.getField('SHAPE_VARIABLE').getText();
+  const materialColor = block.getFieldValue('MATERIAL_COLOR');
+  const color = Blockly.JavaScript.valueToCode(block, 'COLOR', Blockly.JavaScript.ORDER_NONE);
+
+  let code = `${shapeName}`
+
+  if (materialColor === 'diffuseColor') {
+    code += `.diffuseColor = ${color} \n`
+  } else if (materialColor === 'specularColor') {
+    code += `.specularColor = ${color} \n`
+  } else if (materialColor === 'emissiveColor') {
+    code += `.emissiveColor = ${color} \n`
+  } else if (materialColor === 'ambientColor') {
+    code += `.ambientColor = ${color} \n`
+  }
+  
+  return code
+
+}
+
+// Creación de bloques BabylonJS para la creación de colores con RGB
+Blockly.Blocks['color_rgb'] = {
+  init: function() {
+
+    const validarNumeroRGB = function(value) {
+
+      const number = Number(value);
+
+      if (isNaN(number)) {
+        return 0;
+      }
+
+      if (number < 0) {
+        return 0;
+      }
+
+      if (number > 255) {
+        return 255;
+      }
+
+      return number
+
+    }
+
+    this.appendDummyInput()
+        .appendField("Rojo:")
+        .appendField(new Blockly.FieldTextInput(0, validarNumeroRGB), "RED")
+    this.appendDummyInput()
+        .appendField("Verde:")
+        .appendField(new Blockly.FieldTextInput(0, validarNumeroRGB), "GREEN")
+    this.appendDummyInput()
+        .appendField("Azul:")
+        .appendField(new Blockly.FieldTextInput(0, validarNumeroRGB), "BLUE")
+    this.setInputsInline(true)
+    this.setOutput(true, null)
+    this.setColour(230)
+    this.setTooltip("Crea un color en Babylon.js con los valores RGB especificados")
+    this.setHelpUrl("https://doc.babylonjs.com/features/featuresDeepDive/materials/using/materials_introduction")
+  }
+};
+
+Blockly.JavaScript['color_rgb'] = function(block) {
+  const red = block.getFieldValue('RED') || 0;
+  const green = block.getFieldValue('GREEN') || 0;
+  const blue = block.getFieldValue('BLUE') || 0;
+
+  const code = `new BABYLON.Color3(${red}, ${green}, ${blue})`;
+  return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+// Creación de bloques BabylonJS para la creación de colores con selector
+Blockly.Blocks['color_picker'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Color:");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldColour("#FFFFFF"), "COLOR");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(230);
+    this.setTooltip("Crea un color en Babylon.js con el color especificado en el selector");
+    this.setHelpUrl("https://doc.babylonjs.com/features/featuresDeepDive/materials/using/materials_introduction");
+  }
+};
+
+Blockly.JavaScript['color_picker'] = function(block) {
+  const color = block.getFieldValue('COLOR') || '#FFFFFF';
+
+  const code = `new BABYLON.Color3.FromHexString("${color}")`;
+  return [code, Blockly.JavaScript.ORDER_NONE];
+}
+
+// Creación de bloques BabylonJS para la creación de colores con hexadecimales
+Blockly.Blocks['color_hex'] = {
+  init: function() {
+
+    const validarHexadecimal = function(value) {
+    
+      const hexadecimalRegex = /^#([0-9a-f]{3}){1,2}$/i;
+
+      if (value.match(hexadecimalRegex)) {
+        return hexadecimalRegex[0];
+      }
+
+      return '#FFFFFF';
+    
+    }
+
+    this.appendDummyInput()
+        .appendField("Hexadecimal:");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldTextInput("#FFFFFF", validarHexadecimal), "HEXA_CODE");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(230);
+    this.setTooltip("Crea un color en Babylon.js con el color especificado en hexadecimal");
+    this.setHelpUrl("https://doc.babylonjs.com/features/featuresDeepDive/materials/using/materials_introduction");
+  }
+};
+
+Blockly.JavaScript['color_hex'] = function(block) {
+  const color = block.getFieldValue('HEXA_CODE') || '#FFFFFF';
+
+  const code = `new BABYLON.Color3.FromHexString("${color}")`;
+  return [code, Blockly.JavaScript.ORDER_NONE];
+}

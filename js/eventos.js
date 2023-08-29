@@ -201,6 +201,48 @@ const toolbox = {
             "type": "babylon_create_ground"
           }
         ]
+      },
+      {
+        "kind": "category",
+        "name": "Material",
+        "contents": [
+          {
+            "kind": "block",
+            "type": "babylon_create_material"
+          },
+          {
+            "kind": "block",
+            "type": "babylon_set_material"
+          }
+        ]
+      },
+      {
+        "kind": "category",
+        "name": "Textura",
+        "contents": [
+          {
+            "kind": "block",
+            "type": "babylon_set_material_color"
+          }
+        ]
+      },
+      {
+        "kind": "category",
+        "name": "Colores",
+        "contents": [
+          {
+            "kind": "block",
+            "type": "color_rgb"
+          },
+          {
+            "kind": "block",
+            "type": "color_hex"
+          },
+          {
+            "kind": "block",
+            "type": "color_picker"
+          }
+        ]
       }
     ]
   }
@@ -230,8 +272,6 @@ function runCode() {
     const code = Blockly.JavaScript.workspaceToCode(workspace);
     
     try {
-        // console.log(code);
-
         // Abrir una nueva ventana con el código de la variable codigoJS
         window.href = "_blank", window.open().document.write(obtenerCodigo());
     } catch (e) {
