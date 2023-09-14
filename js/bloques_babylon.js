@@ -374,7 +374,7 @@ Blockly.JavaScript['babylon_create_ground'] = function (block) {
   const width = Blockly.JavaScript.valueToCode(block, 'WIDTH', Blockly.JavaScript.ORDER_ATOMIC) || '1';
   const height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC) || '1';
 
-  let code = `${groundName} = BABYLON.MeshBuilder.CreateGround("${groundName}", { width: ${width}, height: ${height} })}`
+  let code = `${groundName} = BABYLON.MeshBuilder.CreateGround("${groundName}", { width: ${width}, height: ${height} })`
   
   return code
 
@@ -435,7 +435,7 @@ Blockly.JavaScript['babylon_set_material'] = function (block) {
 
 }
 
-// Creación de bloques BabylonJS para la creación de asignación de material a una figura
+// Creación de bloques BabylonJS para la asignación de color a un material
 Blockly.Blocks['babylon_set_material_color'] = {
   init: function() {
     const dropdown = new Blockly.FieldDropdown([
@@ -445,9 +445,9 @@ Blockly.Blocks['babylon_set_material_color'] = {
       ["ambiente", "ambientColor"]
     ]);
     this.appendDummyInput()
-        .appendField("Asignar material para el material")
+        .appendField("Al material llamado")
         .appendField(new Blockly.FieldVariable("shape"), "SHAPE_VARIABLE")
-        .appendField("con reaccion a la luz")
+        .appendField("asignar reaccion a la luz")
         .appendField(dropdown, "MATERIAL_COLOR")
     this.appendValueInput("COLOR")
         .appendField("con el color:")
@@ -584,3 +584,205 @@ Blockly.JavaScript['color_hex'] = function(block) {
   const code = `new BABYLON.Color3.FromHexString("${color}")`;
   return [code, Blockly.JavaScript.ORDER_NONE];
 }
+
+// Creación de bloques BabylonJS para la creación de Acciones
+Blockly.Blocks['babylon_create_action'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Asignar accion a")
+        .appendField(new Blockly.FieldVariable("item"), "VARIABLE_ACTION");
+    // this.appendStatementInput("ACTIONS")
+    //     .setCheck(null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("");
+  }
+};
+
+Blockly.JavaScript['babylon_create_action'] = function(block) {
+  const variable = block.getField('VARIABLE_ACTION').getText();
+  // const statements_name = Blockly.JavaScript.statementToCode(block, 'ACTIONS');
+
+  let code = ''
+
+  if(variable.actionManager === null || variable.actionManager === undefined) {
+    code = `${variable}.actionManager = new BABYLON.ActionManager(scene) \n`
+  }
+
+  // code += statements_name
+
+  return code
+};
+
+// Creación de bloques BabylonJS para el registro de Acciones
+Blockly.Blocks['babylon_register_action'] = {
+  init: function() {
+    const dropdownTriggers = new Blockly.FieldDropdown([
+      ["de click", "BABYLON.ActionManager.OnPickTrigger"],
+      ["de doble click", "BABYLON.ActionManager.OnDoublePickTrigger"],
+      ["pase sobre", "BABYLON.ActionManager.OnPointerOverTrigger"],
+      ["pase fuera", "BABYLON.ActionManager.OnPointerOutTrigger"],
+    ]);
+
+    const dropdownActions = new Blockly.FieldDropdown([
+      ["Cambiar valor booleano", "BABYLON.SwitchBooleanAction"],
+      ["Asignar valor numérico", "BABYLON.SetValueAction"],
+      ["Incrementar valor numérico", "BABYLON.IncrementValueAction"],
+      ["Ejecutar los siguientes bloques", "BABYLON.ExecuteCodeAction"]
+    ]);
+    this.setInputsInline(false);
+    this.appendDummyInput()
+        .appendField("Registrar accion en")
+        .appendField(new Blockly.FieldVariable("action"), "ACTION_VARIABLE");
+    this.appendDummyInput()
+        .appendField("Cuando se")
+        .appendField(dropdownTriggers, "TRIGGER")
+    this.appendDummyInput()
+        .appendField("realizar la accion")
+        .appendField(dropdownActions, "ACTION")
+    this.appendDummyInput("SHAPE")
+        .appendField("en")
+        .appendField(new Blockly.FieldVariable("shape"), "SHAPE_VARIABLE")
+    this.appendValueInput("PROPERTY")
+        .appendField("en la propiedad")
+    this.appendValueInput("VALUE")
+        .appendField("con el valor")
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("");
+    const thisBlock = this;
+    dropdownActions.setValidator(function(option) {
+      thisBlock.updateShape_(option);
+      return option;
+    });
+  },
+  updateShape_: function(action) {
+
+    if(action === "BABYLON.ExecuteCodeAction") {
+
+      if (!this.getInput('CODE_BLOCKS')) {
+        this.appendStatementInput("CODE_BLOCKS")
+            .setCheck(null)
+            .appendField("con los siguientes bloques");
+      }
+
+      if(this.getInput('SHAPE')) {
+        this.removeInput("SHAPE");
+      }
+      
+      if(this.getInput('PROPERTY')) {
+        this.removeInput("PROPERTY");
+      }
+
+      if(this.getInput('VALUE')) {
+        this.removeInput("VALUE");
+      }
+
+
+    } else {
+
+      if (this.getInput('CODE_BLOCKS')) {
+        this.removeInput("CODE_BLOCKS");
+      }
+
+      if(!this.getField('SHAPE_VARIABLE')) {
+        this.appendDummyInput()
+            .appendField("en")
+            .appendField(new Blockly.FieldVariable("shape"), "SHAPE_VARIABLE")
+      }
+      
+      if(!this.getInput('PROPERTY')) {
+        this.appendValueInput("PROPERTY")
+            .appendField("en la propiedad")
+      }
+
+      if(!this.getInput('VALUE')) {
+        this.appendValueInput("VALUE")
+            .appendField("con el valor")
+      }
+      
+    }
+  }
+};
+
+Blockly.JavaScript['babylon_register_action'] = function(block) {
+  const action_variable = block.getField('ACTION_VARIABLE').getText();
+  const trigger = block.getFieldValue('TRIGGER');
+  const action = block.getFieldValue('ACTION');
+
+  const shape = block.getField('SHAPE_VARIABLE') ? block.getField('SHAPE_VARIABLE').getText() : null;
+  const property = Blockly.JavaScript.valueToCode(block, 'PROPERTY', Blockly.JavaScript.ORDER_ATOMIC) || '';
+  const value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_ATOMIC) || '';
+  const code_blocks = Blockly.JavaScript.statementToCode(block, 'CODE_BLOCKS');
+
+  let code = ''
+
+  // Si se eligio la opción de ejecutar los siguientes bloques
+  if(shape === null) {
+
+    code = ` ${action_variable}.actionManager.registerAction(
+      new ${action}(
+        ${trigger},
+        function(evt) {
+          ${code_blocks}
+        }
+      )
+    ) \n`;
+
+  } else {
+
+    code = ` ${action_variable}.actionManager.registerAction(
+      new ${action}(
+        ${trigger},
+        ${shape},
+        ${property},
+        ${value}
+      )
+    ) \n`;
+
+  }
+
+  return code
+};
+
+// Creación de bloques BabylonJS para las transformaciones
+Blockly.Blocks['babylon_transform'] = {
+  init: function() {
+    const dropdown = new Blockly.FieldDropdown([
+      ["trasladar", "position"],
+      ["rotar", "rotation"],
+      ["escalar", "scaling"]
+    ]);
+    this.appendDummyInput()
+        .appendField(dropdown, "TRANSFORMATION")
+        .appendField("la figura")
+        .appendField(new Blockly.FieldVariable("shape"), "SHAPE_VARIABLE")
+    this.appendValueInput("X")
+        .setCheck("Number")
+        .appendField("en X")
+    this.appendValueInput("Y")
+        .setCheck("Number")
+        .appendField("en Y")
+    this.appendValueInput("Z")
+        .setCheck("Number")
+        .appendField("en Z")
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("Realiza una transformación en Babylon.js a la figura especificada");
+    this.setHelpUrl("");
+  }
+};
+
+Blockly.JavaScript['babylon_transform'] = function(block) {
+  const transformation = block.getFieldValue('TRANSFORMATION');
+  const shape = block.getField('SHAPE_VARIABLE').getText();
+  const x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+  const y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+  const z = Blockly.JavaScript.valueToCode(block, 'Z', Blockly.JavaScript.ORDER_ATOMIC) || '0';
+
+  let code = `${shape}.${transformation} = new BABYLON.Vector3(${x}, ${y}, ${z}) \n`
+
+  return code
+};

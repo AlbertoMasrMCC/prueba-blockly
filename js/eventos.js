@@ -243,6 +243,30 @@ const toolbox = {
             "type": "color_picker"
           }
         ]
+      },
+      {
+        "kind": "category",
+        "name": "Acciones",
+        "contents": [
+          {
+            "kind": "block",
+            "type": "babylon_create_action"
+          },
+          {
+            "kind": "block",
+            "type": "babylon_register_action"
+          }
+        ]
+      },
+      {
+        "kind": "category",
+        "name": "Transformaciones",
+        "contents": [
+          {
+            "kind": "block",
+            "type": "babylon_transform"
+          }
+        ]
       }
     ]
   }
