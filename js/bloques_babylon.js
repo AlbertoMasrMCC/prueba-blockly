@@ -319,7 +319,7 @@ Blockly.JavaScript['babylon_create_shape'] = function (block) {
       width = Blockly.JavaScript.valueToCode(block, 'WIDTH', Blockly.JavaScript.ORDER_ATOMIC) || '1';
       height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC) || '1';
       depth = Blockly.JavaScript.valueToCode(block, 'DEPTH', Blockly.JavaScript.ORDER_ATOMIC) || '1';
-      code = `${shapeName} = BABYLON.MeshBuilder.CreateBox("${shapeName}", { width: ${width}, height: ${height}, depth: ${depth} })`;
+      code = `${shapeName} = BABYLON.MeshBuilder.CreateBox("${shapeName}", { width: ${width}, height: ${height}, depth: ${depth} }) \n`;
     break;
     case 'sphere':
       diameterX = Blockly.JavaScript.valueToCode(block, 'DIAMETER_X', Blockly.JavaScript.ORDER_ATOMIC) || '1';
@@ -327,23 +327,23 @@ Blockly.JavaScript['babylon_create_shape'] = function (block) {
       diameterZ = Blockly.JavaScript.valueToCode(block, 'DIAMETER_Z', Blockly.JavaScript.ORDER_ATOMIC) || '1';
       arc = Blockly.JavaScript.valueToCode(block, 'ARC', Blockly.JavaScript.ORDER_ATOMIC) || '1';
       slice = Blockly.JavaScript.valueToCode(block, 'SLICE', Blockly.JavaScript.ORDER_ATOMIC) || '1';
-      code = `${shapeName} = BABYLON.MeshBuilder.CreateSphere("${shapeName}", { diameterX: ${diameterX}, diameterY: ${diameterY}, diameterZ: ${diameterZ}, arc: ${arc}, slice: ${slice} })`;
+      code = `${shapeName} = BABYLON.MeshBuilder.CreateSphere("${shapeName}", { diameterX: ${diameterX}, diameterY: ${diameterY}, diameterZ: ${diameterZ}, arc: ${arc}, slice: ${slice} }) \n`;
     break;
     case 'cylinder':
       height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC) || '1';
       diameterTop = Blockly.JavaScript.valueToCode(block, 'DIAMETER_TOP', Blockly.JavaScript.ORDER_ATOMIC) || '1';
       diameterBottom = Blockly.JavaScript.valueToCode(block, 'DIAMETER_BOTTOM', Blockly.JavaScript.ORDER_ATOMIC) || '1';
-      code = `${shapeName} = BABYLON.MeshBuilder.CreateCylinder("${shapeName}", { height: ${height}, diameterTop: ${diameterTop}, diameterBottom: ${diameterBottom} })`;
+      code = `${shapeName} = BABYLON.MeshBuilder.CreateCylinder("${shapeName}", { height: ${height}, diameterTop: ${diameterTop}, diameterBottom: ${diameterBottom} }) \n`;
     break;
     case 'plane':
       width = Blockly.JavaScript.valueToCode(block, 'WIDTH', Blockly.JavaScript.ORDER_ATOMIC) || '1';
       height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC) || '1';
-      code = `${shapeName} = BABYLON.MeshBuilder.CreatePlane("${shapeName}", { width: ${width}, height: ${height} })`;
+      code = `${shapeName} = BABYLON.MeshBuilder.CreatePlane("${shapeName}", { width: ${width}, height: ${height} }) \n`;
     break;
     case 'torus':
       diameter = Blockly.JavaScript.valueToCode(block, 'DIAMETER', Blockly.JavaScript.ORDER_ATOMIC) || '1';
       thickness = Blockly.JavaScript.valueToCode(block, 'THICKNESS', Blockly.JavaScript.ORDER_ATOMIC) || '1';
-      code = `${shapeName} = BABYLON.MeshBuilder.CreateTorus("${shapeName}", { diameter: ${diameter}, thickness: ${thickness} })`;
+      code = `${shapeName} = BABYLON.MeshBuilder.CreateTorus("${shapeName}", { diameter: ${diameter}, thickness: ${thickness} }) \n`;
     break;
   }
 
@@ -374,7 +374,7 @@ Blockly.JavaScript['babylon_create_ground'] = function (block) {
   const width = Blockly.JavaScript.valueToCode(block, 'WIDTH', Blockly.JavaScript.ORDER_ATOMIC) || '1';
   const height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC) || '1';
 
-  let code = `${groundName} = BABYLON.MeshBuilder.CreateGround("${groundName}", { width: ${width}, height: ${height} })`
+  let code = `${groundName} = BABYLON.MeshBuilder.CreateGround("${groundName}", { width: ${width}, height: ${height} }) \n`
   
   return code
 
@@ -524,7 +524,7 @@ Blockly.JavaScript['color_rgb'] = function(block) {
   const green = block.getFieldValue('GREEN') || 0;
   const blue = block.getFieldValue('BLUE') || 0;
 
-  const code = `new BABYLON.Color3(${red}, ${green}, ${blue})`;
+  const code = `new BABYLON.Color3(${red}, ${green}, ${blue}) \n`;
   return [code, Blockly.JavaScript.ORDER_NONE];
 };
 
@@ -546,7 +546,7 @@ Blockly.Blocks['color_picker'] = {
 Blockly.JavaScript['color_picker'] = function(block) {
   const color = block.getFieldValue('COLOR') || '#FFFFFF';
 
-  const code = `new BABYLON.Color3.FromHexString("${color}")`;
+  const code = `new BABYLON.Color3.FromHexString("${color}") \n`;
   return [code, Blockly.JavaScript.ORDER_NONE];
 }
 
@@ -581,7 +581,7 @@ Blockly.Blocks['color_hex'] = {
 Blockly.JavaScript['color_hex'] = function(block) {
   const color = block.getFieldValue('HEXA_CODE') || '#FFFFFF';
 
-  const code = `new BABYLON.Color3.FromHexString("${color}")`;
+  const code = `new BABYLON.Color3.FromHexString("${color}") \n`;
   return [code, Blockly.JavaScript.ORDER_NONE];
 }
 
@@ -783,6 +783,72 @@ Blockly.JavaScript['babylon_transform'] = function(block) {
   const z = Blockly.JavaScript.valueToCode(block, 'Z', Blockly.JavaScript.ORDER_ATOMIC) || '0';
 
   let code = `${shape}.${transformation} = new BABYLON.Vector3(${x}, ${y}, ${z}) \n`
+
+  return code
+};
+
+// Creación de bloques BabylonJS para mostrar ventanas informativas
+// Escribiendo
+Blockly.Blocks['babylon_show_message_writing'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Mostrar mensaje")
+        .appendField(new Blockly.FieldTextInput("Escribe el mensaje"), "MESSAGE")
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("Muestra un mensaje en una ventana emergente");
+    this.setHelpUrl("");
+  }
+};
+
+Blockly.JavaScript['babylon_show_message_writing'] = function(block) {
+  const message = block.getFieldValue('MESSAGE');
+
+  let code = `alert("${message}") \n`
+
+  return code
+};
+
+// Con variable
+Blockly.Blocks['babylon_show_message_variable'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Mostrar mensaje")
+        .appendField(new Blockly.FieldVariable("Mensaje"), "VARIABLE")
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("Muestra el valor de una variable en una ventana emergente");
+    this.setHelpUrl("");
+  }
+};
+
+Blockly.JavaScript['babylon_show_message_variable'] = function(block) {
+  const variable = block.getField('VARIABLE').getText();
+
+  let code = `alert(${variable}) \n`
+
+  return code
+};
+
+// Con bloque
+Blockly.Blocks['babylon_show_message_block'] = {
+  init: function() {
+    this.appendValueInput("MESSAGE")
+        .appendField("Mostrar mensaje")
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("Muestra un mensaje en una ventana emergente");
+    this.setHelpUrl("");
+  }
+};
+
+Blockly.JavaScript['babylon_show_message_block'] = function(block) {
+  const message = Blockly.JavaScript.valueToCode(block, 'MESSAGE', Blockly.JavaScript.ORDER_ATOMIC) || '""';
+
+  let code = `alert(${message}) \n`
 
   return code
 };

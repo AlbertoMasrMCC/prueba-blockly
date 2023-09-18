@@ -20,6 +20,31 @@ body {
     width: 100%;
 }
 
+#controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+}
+
+#controls .download-upload {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+}
+
+#controls .download-upload img{
+    width: 40px;
+    cursor: pointer;
+}
+
+#controls .download-upload img:hover{
+    border: 1px solid #1b396a;
+    border-radius: 5px;
+    padding: 5px;
+}
+
 footer {
     width: 100%;
     text-align: center;

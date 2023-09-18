@@ -35,8 +35,16 @@
                 <div>
                     <textarea name="taCodigo" id="taCodigo" cols="100" rows="100" disabled></textarea>
                 </div>
-                <div class="text-center mt-3">
-                    <button class="btn btn-primary" id="btnEjecutar" disabled>Ejecutar</button>
+                <div id="controls" class="text-center mt-3">
+                    <div>
+                        <button class="btn btn-primary" id="btnEjecutar" disabled>Ejecutar</button>
+                    </div>
+                    <div class="download-upload">
+                        <img src="./img/download.png" id="btnDescargar" alt="Descargar ambiente de blockly">
+                        <div></div>
+                        <input type="file" id="aCargar" style="display: none;" accept=".json, .xml">
+                        <img src="./img/upload.png" id="btnCargar" alt="Cargar ambiente de blockly">
+                    </div>
                 </div>
             </section>
         </main>

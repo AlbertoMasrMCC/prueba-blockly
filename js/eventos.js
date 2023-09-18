@@ -267,6 +267,24 @@ const toolbox = {
             "type": "babylon_transform"
           }
         ]
+      },
+      {
+        "kind": "category",
+        "name": "Mensajes",
+        "contents": [
+          {
+            "kind": "block",
+            "type": "babylon_show_message_writing"
+          },
+          {
+            "kind": "block",
+            "type": "babylon_show_message_variable"
+          },
+          {
+            "kind": "block",
+            "type": "babylon_show_message_block"
+          }
+        ]
       }
     ]
   }
@@ -290,6 +308,62 @@ function updateCode(event) {
     }
 
     document.getElementById('taCodigo').value = code;
+}
+
+function createFile(bloquesJSON) {
+  const file = new Blob([bloquesJSON], {type: 'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(file);
+  a.download = 'bloques.json';
+  a.click();
+}
+
+function downloadCode() {
+  
+  const state = Blockly.serialization.workspaces.save(workspace);
+
+  if(Object.keys(state).length === 0) {
+    alert('No hay código para descargar');
+    return;
+  }
+  
+  const bloquesJSON = JSON.stringify(state);
+
+  createFile(bloquesJSON);
+
+}
+
+function uploadCode() {
+
+  aCargar.click();
+
+}
+
+function uploadFile() {
+  const file = aCargar.files[0];
+
+  if(!file) {
+    alert('No se ha seleccionado ningún archivo');
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    const contenido = event.target.result;
+
+    const bloquesJSON = JSON.parse(contenido);
+
+    if(!bloquesJSON.hasOwnProperty('blocks')) {
+      alert('El archivo seleccionado no es válido');
+      return;
+    }
+
+    Blockly.serialization.workspaces.load(bloquesJSON, workspace);
+  }
+
+  reader.readAsText(file);
+
 }
 
 function runCode() {
@@ -327,6 +401,14 @@ const workspace = Blockly.inject('blocklyDiv', { toolbox: toolbox, move: move, z
 // Blockly.JavaScript.addReservedWords('createCylinder');
 
 workspace.addChangeListener(updateCode);
+
+const btnDescargar = document.getElementById('btnDescargar');
+btnDescargar.addEventListener('click', downloadCode);
+
+const btnCargar = document.getElementById('btnCargar');
+btnCargar.addEventListener('click', uploadCode);
+const aCargar = document.getElementById('aCargar');
+aCargar.addEventListener('change', uploadFile);
 
 const btnEjecutar = document.getElementById('btnEjecutar');
 btnEjecutar.addEventListener('click', runCode);
@@ -388,6 +470,8 @@ function obtenerCodigo() {
 
           const createScene = () => {
             const scene = new BABYLON.Scene(engine);
+
+            scene.clearColor = BABYLON.Color3.FromHexString("#D0D3D4");
     
             // Código generado por el usuario
             ${document.getElementById('taCodigo').value}
