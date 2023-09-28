@@ -787,68 +787,40 @@ Blockly.JavaScript['babylon_transform'] = function(block) {
   return code
 };
 
-// Creación de bloques BabylonJS para mostrar ventanas informativas
-// Escribiendo
-Blockly.Blocks['babylon_show_message_writing'] = {
+// Creación de bloques BabylonJS para mostrar ventana con información
+Blockly.Blocks['babylon_show_window_message'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Mostrar mensaje")
-        .appendField(new Blockly.FieldTextInput("Escribe el mensaje"), "MESSAGE")
+        .appendField("Crear ventana")
+        .appendField(new Blockly.FieldVariable("window"), "WINDOW_VARIABLE");
+    this.appendValueInput("HEIGHT")
+        .setCheck("Number")
+        .appendField("con el alto")
+        this.appendValueInput("WIDTH")
+        .setCheck("Number")
+        .appendField("y el ancho")
+    this.appendDummyInput()
+        .appendField("con el título")
+        .appendField(new Blockly.FieldTextInput("title"), "TITLE");
+    this.appendDummyInput()
+        .appendField("y el mensaje")
+        .appendField(new Blockly.FieldTextInput("message"), "MESSAGE");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(230);
-    this.setTooltip("Muestra un mensaje en una ventana emergente");
+    this.setTooltip("Muestra un mensaje en una ventana de Babylon");
     this.setHelpUrl("");
   }
 };
 
-Blockly.JavaScript['babylon_show_message_writing'] = function(block) {
+Blockly.JavaScript['babylon_show_window_message'] = function(block) {
+  const window_variable = block.getField('WINDOW_VARIABLE').getText();
+  const height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC) || '1';
+  const width = Blockly.JavaScript.valueToCode(block, 'WIDTH', Blockly.JavaScript.ORDER_ATOMIC) || '1';
+  const title = block.getFieldValue('TITLE');
   const message = block.getFieldValue('MESSAGE');
 
-  let code = `alert("${message}") \n`
-
-  return code
-};
-
-// Con variable
-Blockly.Blocks['babylon_show_message_variable'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("Mostrar mensaje")
-        .appendField(new Blockly.FieldVariable("Mensaje"), "VARIABLE")
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(230);
-    this.setTooltip("Muestra el valor de una variable en una ventana emergente");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.JavaScript['babylon_show_message_variable'] = function(block) {
-  const variable = block.getField('VARIABLE').getText();
-
-  let code = `alert(${variable}) \n`
-
-  return code
-};
-
-// Con bloque
-Blockly.Blocks['babylon_show_message_block'] = {
-  init: function() {
-    this.appendValueInput("MESSAGE")
-        .appendField("Mostrar mensaje")
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(230);
-    this.setTooltip("Muestra un mensaje en una ventana emergente");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.JavaScript['babylon_show_message_block'] = function(block) {
-  const message = Blockly.JavaScript.valueToCode(block, 'MESSAGE', Blockly.JavaScript.ORDER_ATOMIC) || '""';
-
-  let code = `alert(${message}) \n`
+  let code = `let ${window_variable} = createWindow(${height}, ${width}, "${title}", "${message}", scene) \n`;
 
   return code
 };

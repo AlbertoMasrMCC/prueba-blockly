@@ -270,19 +270,11 @@ const toolbox = {
       },
       {
         "kind": "category",
-        "name": "Mensajes",
+        "name": "Ventana",
         "contents": [
           {
             "kind": "block",
-            "type": "babylon_show_message_writing"
-          },
-          {
-            "kind": "block",
-            "type": "babylon_show_message_variable"
-          },
-          {
-            "kind": "block",
-            "type": "babylon_show_message_block"
+            "type": "babylon_show_window_message"
           }
         ]
       }
@@ -368,6 +360,7 @@ function uploadFile() {
 
 function runCode() {
     const code = Blockly.JavaScript.workspaceToCode(workspace);
+    console.log(obtenerCodigo());
     
     try {
         // Abrir una nueva ventana con el código de la variable codigoJS
@@ -437,6 +430,9 @@ function obtenerCodigo() {
         <script src="https://cdn.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
         <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
         <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+
+        <!-- PROPIOS -->
+        <script src="https://sensorapp-itc.web.app/babloxr/window.js"></script>
     
         <style>
             html, body {
