@@ -820,7 +820,98 @@ Blockly.JavaScript['babylon_show_window_message'] = function(block) {
   const title = block.getFieldValue('TITLE');
   const message = block.getFieldValue('MESSAGE');
 
-  let code = `let ${window_variable} = createWindow(${height}, ${width}, "${title}", "${message}", scene) \n`;
+  let code = `let ${window_variable} = createWindow(${height}, ${width}, "${title}", "${message}", true, scene) \n`;
 
   return code
+};
+
+// Creación de bloques BabylonJS para mostrar ventana pregunta y posibles respuestas
+Blockly.Blocks['babylon_show_window_question'] = {
+  init: function() {
+    let numberAnswers = new Blockly.FieldNumber(1, 1, 10);
+    this.appendDummyInput()
+        .appendField("Crear ventana")
+        .appendField(new Blockly.FieldVariable("window"), "WINDOW_TEST_VARIABLE");
+    this.appendValueInput("HEIGHT")
+        .setCheck("Number")
+        .appendField("con el alto");
+    this.appendValueInput("WIDTH")
+        .setCheck("Number")
+        .appendField("y el ancho");
+    this.appendDummyInput()
+        .appendField("con el título")
+        .appendField(new Blockly.FieldTextInput("title"), "TITLE");
+    this.appendDummyInput()
+        .appendField("y la pregunta")
+        .appendField(new Blockly.FieldTextInput("question"), "QUESTION");
+    this.appendDummyInput()
+        .appendField("con")
+        .appendField(numberAnswers, "NUMBER_ANSWERS")
+        .appendField("respuestas");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("Muestra una pregunta en una ventana de Babylon");
+    this.setHelpUrl("");
+    const thisBlock = this;
+    numberAnswers.setValidator(function(answers) {
+      thisBlock.updateShape_(answers);
+    });
+  },
+  updateShape_: function(answers) {
+    this.removeAnswers_()
+    this.addAnswers_(answers)
+    this.correctAnswers_(answers)
+  },
+  removeAnswers_: function() {
+    for(let i = 1 ; i <= 10 ; i++) {
+      if(this.getInput("ANSWER_" + i)) {
+        this.removeInput("ANSWER_" + i);
+      }
+    }
+  },
+  addAnswers_: function(answers) {
+    for(let i = 1 ; i <= answers ; i++) {
+      if(!this.getInput("ANSWER_" + i)) {
+        this.appendValueInput("ANSWER_" + i)
+          .setCheck("String")
+          .appendField("Respuesta "+ i);
+      }
+    }
+  },
+  correctAnswers_: function(answers) {
+
+    if(this.getInput("CORRECT_ANSWER_DUMMY")) {
+      this.removeInput("CORRECT_ANSWER_DUMMY");
+    }
+    
+    this.appendDummyInput("CORRECT_ANSWER_DUMMY")
+        .appendField("con la respuesta correcta")
+        .appendField(new Blockly.FieldNumber(1,1,answers), "CORRECT_ANSWER");
+
+  }
+};
+
+Blockly.JavaScript['babylon_show_window_question'] = function(block) {
+
+  const window_variable = block.getField('WINDOW_TEST_VARIABLE').getText();
+  const height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC) || '1';
+  const width = Blockly.JavaScript.valueToCode(block, 'WIDTH', Blockly.JavaScript.ORDER_ATOMIC) || '1';
+  const title = block.getFieldValue('TITLE');
+  const question = block.getFieldValue('QUESTION');
+  const numberAnswers = block.getFieldValue('NUMBER_ANSWERS');
+
+  let answers = []
+
+  for(let i = 1 ; i <= numberAnswers ; i++) {
+    let response = Blockly.JavaScript.valueToCode(block, 'ANSWER_' + i, Blockly.JavaScript.ORDER_ATOMIC) || '';
+    answers.push(response)
+  }
+
+  let correctAnswer = block.getFieldValue('CORRECT_ANSWER');
+  correctAnswer = correctAnswer - 1;
+
+  let code = `let ${window_variable} = createTest(${height}, ${width}, "${title}", "${question}", ${correctAnswer}, scene, ${answers}) \n`;
+
+  return code;
 };
