@@ -279,6 +279,10 @@ const toolbox = {
           {
             "kind": "block",
             "type": "babylon_show_window_question"
+          },
+          {
+            "kind": "block",
+            "type": "babylon_show_window_video"
           }
         ]
       }

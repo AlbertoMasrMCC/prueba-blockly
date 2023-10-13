@@ -791,8 +791,8 @@ Blockly.JavaScript['babylon_transform'] = function(block) {
 Blockly.Blocks['babylon_show_window_message'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Crear ventana")
-        .appendField(new Blockly.FieldVariable("window"), "WINDOW_VARIABLE");
+        .appendField("Crear ventana de mensaje")
+        .appendField(new Blockly.FieldVariable("window_message"), "WINDOW_VARIABLE");
     this.appendValueInput("HEIGHT")
         .setCheck("Number")
         .appendField("con el alto")
@@ -820,7 +820,7 @@ Blockly.JavaScript['babylon_show_window_message'] = function(block) {
   const title = block.getFieldValue('TITLE');
   const message = block.getFieldValue('MESSAGE');
 
-  let code = `let ${window_variable} = createWindow(${height}, ${width}, "${title}", "${message}", true, scene) \n`;
+  let code = `${window_variable} = createWindow(${height}, ${width}, "${title}", "${message}", true, scene) \n`;
 
   return code
 };
@@ -828,10 +828,15 @@ Blockly.JavaScript['babylon_show_window_message'] = function(block) {
 // Creación de bloques BabylonJS para mostrar ventana pregunta y posibles respuestas
 Blockly.Blocks['babylon_show_window_question'] = {
   init: function() {
+    const dificultadDropDown = new Blockly.FieldDropdown([
+      ["Fácil", "1"],
+      ["Medio", "2"],
+      ["Difícil", "3"]
+    ]);
     let numberAnswers = new Blockly.FieldNumber(1, 1, 10);
     this.appendDummyInput()
-        .appendField("Crear ventana")
-        .appendField(new Blockly.FieldVariable("window"), "WINDOW_TEST_VARIABLE");
+        .appendField("Crear ventana de cuestionario")
+        .appendField(new Blockly.FieldVariable("window_test"), "WINDOW_TEST_VARIABLE");
     this.appendValueInput("HEIGHT")
         .setCheck("Number")
         .appendField("con el alto");
@@ -844,6 +849,15 @@ Blockly.Blocks['babylon_show_window_question'] = {
     this.appendDummyInput()
         .appendField("y la pregunta")
         .appendField(new Blockly.FieldTextInput("question"), "QUESTION");
+    this.appendDummyInput()
+        .appendField("con la dificultad")
+        .appendField(dificultadDropDown, "DIFICULTAD");
+    this.appendDummyInput()
+        .appendField("y el mensaje para la pregunta correcta")
+        .appendField(new Blockly.FieldTextInput("Well done"), "CORRECT_MESSAGE");
+    this.appendDummyInput()
+        .appendField("y el mensaje para la pregunta incorrecta")
+        .appendField(new Blockly.FieldTextInput("Try again"), "INCORRECT_MESSAGE");
     this.appendDummyInput()
         .appendField("con")
         .appendField(numberAnswers, "NUMBER_ANSWERS")
@@ -899,6 +913,9 @@ Blockly.JavaScript['babylon_show_window_question'] = function(block) {
   const width = Blockly.JavaScript.valueToCode(block, 'WIDTH', Blockly.JavaScript.ORDER_ATOMIC) || '1';
   const title = block.getFieldValue('TITLE');
   const question = block.getFieldValue('QUESTION');
+  const dificultad = block.getFieldValue('DIFICULTAD');
+  const correctMessage = block.getFieldValue('CORRECT_MESSAGE');
+  const incorrectMessage = block.getFieldValue('INCORRECT_MESSAGE');
   const numberAnswers = block.getFieldValue('NUMBER_ANSWERS');
 
   let answers = []
@@ -911,7 +928,45 @@ Blockly.JavaScript['babylon_show_window_question'] = function(block) {
   let correctAnswer = block.getFieldValue('CORRECT_ANSWER');
   correctAnswer = correctAnswer - 1;
 
-  let code = `let ${window_variable} = createTest(${height}, ${width}, "${title}", "${question}", ${correctAnswer}, scene, ${answers}) \n`;
+  let code = `${window_variable} = createTest(${height}, ${width}, "${title}", "${question}", ${correctAnswer}, "${correctMessage}", "${incorrectMessage}", scene, ${answers}) \n`;
+
+  return code;
+};
+
+// Creación de bloques BabylonJS para mostrar ventana con textura de video
+Blockly.Blocks['babylon_show_window_video'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Crear ventana de video")
+        .appendField(new Blockly.FieldVariable("window_video"), "WINDOW_VARIABLE");
+    this.appendValueInput("HEIGHT")
+        .setCheck("Number")
+        .appendField("con el alto");
+    this.appendValueInput("WIDTH")
+        .setCheck("Number")
+        .appendField("y el ancho");
+    this.appendDummyInput()
+        .appendField("con el título")
+        .appendField(new Blockly.FieldTextInput("title"), "TITLE");
+    this.appendDummyInput()
+        .appendField("con la URL del video")
+        .appendField(new Blockly.FieldTextInput("video"), "VIDEO");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("Muestra un video en una ventana de Babylon");
+    this.setHelpUrl("");
+  }
+};
+
+Blockly.JavaScript['babylon_show_window_video'] = function(block) {
+  const window_variable = block.getField('WINDOW_VARIABLE').getText();
+  const height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC) || '1';
+  const width = Blockly.JavaScript.valueToCode(block, 'WIDTH', Blockly.JavaScript.ORDER_ATOMIC) || '1';
+  const title = block.getFieldValue('TITLE');
+  const video = block.getFieldValue('VIDEO');
+
+  let code = `${window_variable} = createVideo(${height}, ${width}, "${title}", "${video}", scene) \n`;
 
   return code;
 };
